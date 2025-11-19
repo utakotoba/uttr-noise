@@ -47,9 +47,6 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          draft: false
-          prerelease: false
+        run: bunx changelogithub --contributors --emoji false
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

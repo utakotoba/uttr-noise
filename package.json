@@ -1,17 +1,17 @@
 {
-  "name": "@aimless/ts-package-starter",
+  "name": "@uttr/noise",
   "type": "module",
-  "version": "0.1.0-dev.1",
-  "description": "Project template for single TypeScript package",
+  "version": "0.1.0-dev.0",
+  "description": "JavaScript library for noise images & overlays with WebGL",
   "author": "Kohane <i@kept.to>",
   "license": "MIT",
-  "homepage": "https://github.com/utakotoba/ts-package-starter#readme",
+  "homepage": "https://github.com/utakotoba/uttr-noise#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/utakotoba/ts-package-starter.git"
+    "url": "git+https://github.com/utakotoba/uttr-noise.git"
   },
   "bugs": {
-    "url": "https://github.com/utakotoba/ts-package-starter/issues"
+    "url": "https://github.com/utakotoba/uttr-noise/issues"
   },
   "keywords": [],
   "exports": {
