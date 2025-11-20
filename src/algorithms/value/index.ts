@@ -1,10 +1,7 @@
 import type { SharedConfig, UttrNoiseGenerator } from '@/types'
 import { mergeSharedConfig } from '@/config'
-import {
-  createProgram,
-  createWebGLContext,
-  renderToImageData,
-} from '@/webgl/utils'
+import { renderToImageData, setUniforms } from '@/webgl/render'
+import { createProgram, createWebGLContext } from '@/webgl/setup'
 import fragmentSource from './fragment.glsl'
 import vertexSource from './vertex.glsl'
 
@@ -87,28 +84,15 @@ export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
 
       gl.useProgram(program)
 
-      const widthLocation = gl.getUniformLocation(program, 'u_width')
-      const heightLocation = gl.getUniformLocation(program, 'u_height')
-      const seedLocation = gl.getUniformLocation(program, 'u_seed')
-      const frequencyLocation = gl.getUniformLocation(program, 'u_frequency')
-      const octavesLocation = gl.getUniformLocation(program, 'u_octaves')
-      const persistenceLocation = gl.getUniformLocation(program, 'u_persistence')
-      const lacunarityLocation = gl.getUniformLocation(program, 'u_lacunarity')
-
-      if (widthLocation)
-        gl.uniform1f(widthLocation, shared.width)
-      if (heightLocation)
-        gl.uniform1f(heightLocation, shared.height)
-      if (seedLocation)
-        gl.uniform1f(seedLocation, shared.seed)
-      if (frequencyLocation)
-        gl.uniform1f(frequencyLocation, frequency)
-      if (octavesLocation)
-        gl.uniform1i(octavesLocation, octaves)
-      if (persistenceLocation)
-        gl.uniform1f(persistenceLocation, persistence)
-      if (lacunarityLocation)
-        gl.uniform1f(lacunarityLocation, lacunarity)
+      setUniforms(gl, program, {
+        u_width: { type: '1f', value: shared.width },
+        u_height: { type: '1f', value: shared.height },
+        u_seed: { type: '1f', value: shared.seed },
+        u_frequency: { type: '1f', value: frequency },
+        u_octaves: { type: '1i', value: octaves },
+        u_persistence: { type: '1f', value: persistence },
+        u_lacunarity: { type: '1f', value: lacunarity },
+      })
 
       return renderToImageData(gl, program, shared.width, shared.height)
     },

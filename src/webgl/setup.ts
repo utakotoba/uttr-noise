@@ -1,5 +1,5 @@
 /**
- * Shared WebGL utilities for noise generation.
+ * WebGL setup utilities for creating contexts, shaders, and programs.
  */
 
 /**
@@ -85,71 +85,4 @@ export function createProgram(
   gl.deleteShader(fragmentShader)
 
   return program
-}
-
-/**
- * Create a full-screen quad for rendering.
- * @param gl - WebGL 2 rendering context.
- * @returns Buffer containing quad vertices.
- */
-export function createQuad(gl: WebGL2RenderingContext): WebGLBuffer {
-  const buffer = gl.createBuffer()
-  if (!buffer) {
-    throw new Error('Failed to create buffer')
-  }
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
-    gl.STATIC_DRAW,
-  )
-
-  return buffer
-}
-
-/**
- * Render to ImageData using WebGL 2.
- * @param gl - WebGL 2 rendering context.
- * @param program - WebGL program to use.
- * @param width - Output width.
- * @param height - Output height.
- * @returns Generated ImageData.
- */
-export function renderToImageData(
-  gl: WebGL2RenderingContext,
-  program: WebGLProgram,
-  width: number,
-  height: number,
-): ImageData {
-  gl.viewport(0, 0, width, height)
-  gl.useProgram(program)
-
-  const quad = createQuad(gl)
-  const positionLocation = gl.getAttribLocation(program, 'a_position')
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, quad)
-  gl.enableVertexAttribArray(positionLocation)
-  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0)
-
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
-
-  const pixels = new Uint8Array(width * height * 4)
-  gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
-
-  // Flip vertically because WebGL reads from bottom-left
-  const imageData = new ImageData(width, height)
-  for (let y = 0; y < height; y++) {
-    const srcY = height - 1 - y
-    for (let x = 0; x < width; x++) {
-      const srcIdx = (srcY * width + x) * 4
-      const dstIdx = (y * width + x) * 4
-      imageData.data[dstIdx] = pixels[srcIdx]
-      imageData.data[dstIdx + 1] = pixels[srcIdx + 1]
-      imageData.data[dstIdx + 2] = pixels[srcIdx + 2]
-      imageData.data[dstIdx + 3] = pixels[srcIdx + 3]
-    }
-  }
-
-  return imageData
 }
