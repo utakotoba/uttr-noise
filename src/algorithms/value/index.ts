@@ -1,5 +1,6 @@
 import type { ValueNoiseConfig } from '@/types/algorithms'
 import type { UttrNoiseGenerator } from '@/types/shared'
+import { mergeSharedConfig } from '@/config'
 import {
   createProgram,
   createWebGLContext,
@@ -9,17 +10,14 @@ import fragmentSource from './fragment.glsl'
 import vertexSource from './vertex.glsl'
 
 /**
- * Default configuration values for value noise.
+ * Default configuration values specific to value noise.
  */
-const DEFAULT_CONFIG: Required<ValueNoiseConfig> = {
-  width: 512,
-  height: 512,
-  seed: 37,
+const DEFAULT_VALUE_CONFIG = {
   frequency: 1,
   octaves: 1,
   persistence: 0.5,
   lacunarity: 2,
-}
+} as const
 
 /**
  * Create a value noise generator.
@@ -35,20 +33,17 @@ export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
 
   return {
     async imageData(config: Partial<ValueNoiseConfig>): Promise<ImageData> {
-      // Merge with defaults
-      const width = config.width ?? DEFAULT_CONFIG.width
-      const height = config.height ?? DEFAULT_CONFIG.height
-      const seed: number = config.seed === false
-        ? Date.now()
-        : (config.seed ?? (DEFAULT_CONFIG.seed === false ? Date.now() : DEFAULT_CONFIG.seed))
-      const frequency = config.frequency ?? DEFAULT_CONFIG.frequency
-      const octaves = config.octaves ?? DEFAULT_CONFIG.octaves
-      const persistence = config.persistence ?? DEFAULT_CONFIG.persistence
-      const lacunarity = config.lacunarity ?? DEFAULT_CONFIG.lacunarity
+      // Merge shared config with defaults
+      const shared = mergeSharedConfig(config)
+      // Merge algorithm-specific config with defaults
+      const frequency = config.frequency ?? DEFAULT_VALUE_CONFIG.frequency
+      const octaves = config.octaves ?? DEFAULT_VALUE_CONFIG.octaves
+      const persistence = config.persistence ?? DEFAULT_VALUE_CONFIG.persistence
+      const lacunarity = config.lacunarity ?? DEFAULT_VALUE_CONFIG.lacunarity
 
       // Resize canvas
-      canvas.width = width
-      canvas.height = height
+      canvas.width = shared.width
+      canvas.height = shared.height
 
       // Set uniforms
       gl.useProgram(program)
@@ -62,11 +57,11 @@ export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
       const lacunarityLocation = gl.getUniformLocation(program, 'u_lacunarity')
 
       if (widthLocation)
-        gl.uniform1f(widthLocation, width)
+        gl.uniform1f(widthLocation, shared.width)
       if (heightLocation)
-        gl.uniform1f(heightLocation, height)
+        gl.uniform1f(heightLocation, shared.height)
       if (seedLocation)
-        gl.uniform1f(seedLocation, seed)
+        gl.uniform1f(seedLocation, shared.seed)
       if (frequencyLocation)
         gl.uniform1f(frequencyLocation, frequency)
       if (octavesLocation)
@@ -77,7 +72,7 @@ export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
         gl.uniform1f(lacunarityLocation, lacunarity)
 
       // Render to ImageData
-      return renderToImageData(gl, program, width, height)
+      return renderToImageData(gl, program, shared.width, shared.height)
     },
   }
 }
