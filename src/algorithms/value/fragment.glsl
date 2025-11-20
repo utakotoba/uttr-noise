@@ -1,3 +1,4 @@
+#version 300 es
 precision mediump float;
 
 uniform float u_width;
@@ -8,26 +9,27 @@ uniform int u_octaves;
 uniform float u_persistence;
 uniform float u_lacunarity;
 
-// Simple hash function for pseudo-random values
+out vec4 fragColor;
+
+// Hash function for pseudo-random values
 float hash(vec2 p) {
-  p = fract(p * vec2(443.8975, 397.2973));
-  p += dot(p.xy, p.yx + 19.19);
-  p += u_seed * 0.001;
-  return fract(p.x * p.y);
+  vec3 p3 = fract(vec3(p.xyx) * vec3(443.8975, 397.2973, 491.1875));
+  p3 += dot(p3, p3.yzx + 19.19);
+  return fract((p3.x + p3.y) * p3.z + u_seed * 0.0001);
 }
 
-// Value noise function
+// Value noise function with optimized interpolation
 float valueNoise(vec2 p) {
   vec2 i = floor(p);
   vec2 f = fract(p);
 
   // Get corner values
-  float a = hash(i + vec2(0.0, 0.0));
+  float a = hash(i);
   float b = hash(i + vec2(1.0, 0.0));
   float c = hash(i + vec2(0.0, 1.0));
-  float d = hash(i + vec2(1.0, 1.0));
+  float d = hash(i + vec2(1.0));
 
-  // Smooth interpolation
+  // Smoothstep interpolation
   vec2 u = f * f * (3.0 - 2.0 * f);
 
   // Bilinear interpolation
@@ -43,23 +45,26 @@ float fbm(vec2 p) {
   float value = 0.0;
   float amplitude = 1.0;
   float frequency = u_frequency;
+  float maxAmplitude = 0.0;
 
+  // Loop with early exit optimization
   for (int i = 0; i < 8; i++) {
-    if (i < u_octaves) {
-      value += amplitude * valueNoise(p * frequency);
-      amplitude *= u_persistence;
-      frequency *= u_lacunarity;
-    }
+    if (i >= u_octaves) break;
+    
+    value += amplitude * valueNoise(p * frequency);
+    maxAmplitude += amplitude;
+    amplitude *= u_persistence;
+    frequency *= u_lacunarity;
   }
 
-  return value;
+  // Normalize by max amplitude to keep values in 0-1 range
+  return maxAmplitude > 0.0 ? value / maxAmplitude : 0.0;
 }
 
 void main() {
   vec2 uv = gl_FragCoord.xy / vec2(u_width, u_height);
   float noise = fbm(uv);
   
-  // Normalize to 0-1 range and output as grayscale
-  gl_FragColor = vec4(noise, noise, noise, 1.0);
+  fragColor = vec4(noise, noise, noise, 1.0);
 }
 

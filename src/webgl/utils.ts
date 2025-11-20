@@ -3,31 +3,31 @@
  */
 
 /**
- * Create a WebGL rendering context from a canvas.
+ * Create a WebGL 2 rendering context from a canvas.
  * @param canvas - Canvas element to create context from.
- * @returns WebGL rendering context.
- * @throws Error if WebGL is not supported.
+ * @returns WebGL 2 rendering context.
+ * @throws Error if WebGL 2 is not supported.
  */
 export function createWebGLContext(
   canvas: HTMLCanvasElement | OffscreenCanvas,
-): WebGLRenderingContext {
-  const gl = canvas.getContext('webgl')
+): WebGL2RenderingContext {
+  const gl = canvas.getContext('webgl2')
   if (!gl) {
-    throw new Error('WebGL is not supported in this browser')
+    throw new Error('WebGL 2 is not supported in this browser')
   }
   return gl
 }
 
 /**
  * Compile a shader from source code.
- * @param gl - WebGL rendering context.
+ * @param gl - WebGL 2 rendering context.
  * @param type - Shader type (gl.VERTEX_SHADER or gl.FRAGMENT_SHADER).
  * @param source - Shader source code.
  * @returns Compiled shader.
  * @throws Error if compilation fails.
  */
 export function compileShader(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   type: number,
   source: string,
 ): WebGLShader {
@@ -50,14 +50,14 @@ export function compileShader(
 
 /**
  * Create a WebGL program from vertex and fragment shaders.
- * @param gl - WebGL rendering context.
+ * @param gl - WebGL 2 rendering context.
  * @param vertexSource - Vertex shader source code.
  * @param fragmentSource - Fragment shader source code.
  * @returns WebGL program.
  * @throws Error if program creation or linking fails.
  */
 export function createProgram(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   vertexSource: string,
   fragmentSource: string,
 ): WebGLProgram {
@@ -89,10 +89,10 @@ export function createProgram(
 
 /**
  * Create a full-screen quad for rendering.
- * @param gl - WebGL rendering context.
+ * @param gl - WebGL 2 rendering context.
  * @returns Buffer containing quad vertices.
  */
-export function createQuad(gl: WebGLRenderingContext): WebGLBuffer {
+export function createQuad(gl: WebGL2RenderingContext): WebGLBuffer {
   const buffer = gl.createBuffer()
   if (!buffer) {
     throw new Error('Failed to create buffer')
@@ -109,15 +109,15 @@ export function createQuad(gl: WebGLRenderingContext): WebGLBuffer {
 }
 
 /**
- * Render to ImageData using WebGL.
- * @param gl - WebGL rendering context.
+ * Render to ImageData using WebGL 2.
+ * @param gl - WebGL 2 rendering context.
  * @param program - WebGL program to use.
  * @param width - Output width.
  * @param height - Output height.
  * @returns Generated ImageData.
  */
 export function renderToImageData(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   program: WebGLProgram,
   width: number,
   height: number,
