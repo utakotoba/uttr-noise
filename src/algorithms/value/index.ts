@@ -91,7 +91,7 @@ export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
   }
 
   return {
-    async imageData(config?: Partial<ValueNoiseConfig>): Promise<ImageData> {
+    imageData(config?: Partial<ValueNoiseConfig>): ImageData {
       const shared = prepareRender(config)
       return renderToImageData(gl, program, shared.width, shared.height)
     },
