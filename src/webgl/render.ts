@@ -120,3 +120,49 @@ export function renderToImageData(
 
   return imageData
 }
+
+/**
+ * Render directly to a base64 data URL using the existing OffscreenCanvas.
+ * This is more efficient than rendering to ImageData and then converting,
+ * as it avoids the pixel read and ImageData conversion steps.
+ * @param canvas - OffscreenCanvas to render to.
+ * @param gl - WebGL 2 rendering context.
+ * @param program - WebGL program to use.
+ * @param width - Output width.
+ * @param height - Output height.
+ * @returns Base64 data URL string.
+ */
+export async function renderToDataUrl(
+  canvas: OffscreenCanvas,
+  gl: WebGL2RenderingContext,
+  program: WebGLProgram,
+  width: number,
+  height: number,
+): Promise<string> {
+  gl.viewport(0, 0, width, height)
+  gl.useProgram(program)
+
+  const quad = createQuad(gl)
+  const positionLocation = gl.getAttribLocation(program, 'a_position')
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, quad)
+  gl.enableVertexAttribArray(positionLocation)
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0)
+
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+
+  const blob = await canvas.convertToBlob({ type: 'image/png' })
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result)
+      }
+      else {
+        reject(new Error('Failed to convert blob to data URL'))
+      }
+    }
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
+}

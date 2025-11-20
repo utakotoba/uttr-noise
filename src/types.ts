@@ -35,6 +35,13 @@ export interface UttrNoiseGenerator<T extends SharedConfig> {
    * @returns The generated noise image data.
    */
   imageData: (config?: Partial<T>) => Promise<ImageData>
+
+  /**
+   * Generate noise as a base64 data URL that can be directly used in img elements.
+   * @param config - Configuration to use for the noise generation.
+   * @returns The generated noise as a base64 data URL string.
+   */
+  dataUrl: (config?: Partial<T>) => Promise<string>
 }
 
 /**

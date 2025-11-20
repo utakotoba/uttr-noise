@@ -1,6 +1,6 @@
 import type { SharedConfig, UttrNoiseGenerator } from '@/types'
 import { mergeSharedConfig } from '@/config'
-import { renderToImageData, setUniforms } from '@/webgl/render'
+import { renderToDataUrl, renderToImageData, setUniforms } from '@/webgl/render'
 import { setupWebGL } from '@/webgl/setup'
 import fragmentSource from './fragment.glsl'
 import vertexSource from './vertex.glsl'
@@ -65,30 +65,39 @@ const DEFAULT_VALUE_CONFIG = {
 export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
   const { canvas, gl, program } = setupWebGL(vertexSource, fragmentSource)
 
+  const prepareRender = (config?: Partial<ValueNoiseConfig>) => {
+    const shared = mergeSharedConfig(config)
+    const frequency = config?.frequency ?? DEFAULT_VALUE_CONFIG.frequency
+    const octaves = config?.octaves ?? DEFAULT_VALUE_CONFIG.octaves
+    const persistence = config?.persistence ?? DEFAULT_VALUE_CONFIG.persistence
+    const lacunarity = config?.lacunarity ?? DEFAULT_VALUE_CONFIG.lacunarity
+
+    canvas.width = shared.width
+    canvas.height = shared.height
+
+    gl.useProgram(program)
+
+    setUniforms(gl, program, {
+      u_width: { type: '1f', value: shared.width },
+      u_height: { type: '1f', value: shared.height },
+      u_seed: { type: '1f', value: shared.seed },
+      u_frequency: { type: '1f', value: frequency },
+      u_octaves: { type: '1i', value: octaves },
+      u_persistence: { type: '1f', value: persistence },
+      u_lacunarity: { type: '1f', value: lacunarity },
+    })
+
+    return shared
+  }
+
   return {
     async imageData(config?: Partial<ValueNoiseConfig>): Promise<ImageData> {
-      const shared = mergeSharedConfig(config)
-      const frequency = config?.frequency ?? DEFAULT_VALUE_CONFIG.frequency
-      const octaves = config?.octaves ?? DEFAULT_VALUE_CONFIG.octaves
-      const persistence = config?.persistence ?? DEFAULT_VALUE_CONFIG.persistence
-      const lacunarity = config?.lacunarity ?? DEFAULT_VALUE_CONFIG.lacunarity
-
-      canvas.width = shared.width
-      canvas.height = shared.height
-
-      gl.useProgram(program)
-
-      setUniforms(gl, program, {
-        u_width: { type: '1f', value: shared.width },
-        u_height: { type: '1f', value: shared.height },
-        u_seed: { type: '1f', value: shared.seed },
-        u_frequency: { type: '1f', value: frequency },
-        u_octaves: { type: '1i', value: octaves },
-        u_persistence: { type: '1f', value: persistence },
-        u_lacunarity: { type: '1f', value: lacunarity },
-      })
-
+      const shared = prepareRender(config)
       return renderToImageData(gl, program, shared.width, shared.height)
+    },
+    async dataUrl(config?: Partial<ValueNoiseConfig>): Promise<string> {
+      const shared = prepareRender(config)
+      return renderToDataUrl(canvas, gl, program, shared.width, shared.height)
     },
   }
 }
