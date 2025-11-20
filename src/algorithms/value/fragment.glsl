@@ -23,7 +23,6 @@ float valueNoise(vec2 p) {
   vec2 i = floor(p);
   vec2 f = fract(p);
 
-  // Get corner values
   float a = hash(i);
   float b = hash(i + vec2(1.0, 0.0));
   float c = hash(i + vec2(0.0, 1.0));
@@ -47,7 +46,6 @@ float fbm(vec2 p) {
   float frequency = u_frequency;
   float maxAmplitude = 0.0;
 
-  // Loop with early exit optimization
   for (int i = 0; i < 8; i++) {
     if (i >= u_octaves) break;
     
@@ -57,7 +55,6 @@ float fbm(vec2 p) {
     frequency *= u_lacunarity;
   }
 
-  // Normalize by max amplitude to keep values in 0-1 range
   return maxAmplitude > 0.0 ? value / maxAmplitude : 0.0;
 }
 

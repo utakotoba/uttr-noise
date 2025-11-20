@@ -28,24 +28,21 @@ export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
   const canvas = new OffscreenCanvas(1, 1)
   const gl = createWebGLContext(canvas)
 
-  // Compile shader program once
+  // Compile shader program only once
   const program = createProgram(gl, vertexSource, fragmentSource)
 
   return {
     async imageData(config: Partial<ValueNoiseConfig>): Promise<ImageData> {
-      // Merge shared config with defaults
+      // Resolve config with defaults
       const shared = mergeSharedConfig(config)
-      // Merge algorithm-specific config with defaults
       const frequency = config.frequency ?? DEFAULT_VALUE_CONFIG.frequency
       const octaves = config.octaves ?? DEFAULT_VALUE_CONFIG.octaves
       const persistence = config.persistence ?? DEFAULT_VALUE_CONFIG.persistence
       const lacunarity = config.lacunarity ?? DEFAULT_VALUE_CONFIG.lacunarity
 
-      // Resize canvas
       canvas.width = shared.width
       canvas.height = shared.height
 
-      // Set uniforms
       gl.useProgram(program)
 
       const widthLocation = gl.getUniformLocation(program, 'u_width')
@@ -71,7 +68,6 @@ export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
       if (lacunarityLocation)
         gl.uniform1f(lacunarityLocation, lacunarity)
 
-      // Render to ImageData
       return renderToImageData(gl, program, shared.width, shared.height)
     },
   }
