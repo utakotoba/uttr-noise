@@ -3,6 +3,34 @@
  */
 
 /**
+ * WebGL resources created by setupWebGL.
+ */
+export interface WebGLResources {
+  canvas: OffscreenCanvas
+  gl: WebGL2RenderingContext
+  program: WebGLProgram
+}
+
+/**
+ * Setup WebGL resources for noise generation.
+ * Creates canvas, context, and compiles shader program.
+ * @param vertexSource - Vertex shader source code.
+ * @param fragmentSource - Fragment shader source code.
+ * @returns WebGL resources (canvas, context, program).
+ * @throws Error if WebGL 2 is not supported or compilation fails.
+ */
+export function setupWebGL(
+  vertexSource: string,
+  fragmentSource: string,
+): WebGLResources {
+  const canvas = new OffscreenCanvas(1, 1)
+  const gl = createWebGLContext(canvas)
+  const program = createProgram(gl, vertexSource, fragmentSource)
+
+  return { canvas, gl, program }
+}
+
+/**
  * Create a WebGL 2 rendering context from a canvas.
  * @param canvas - Canvas element to create context from.
  * @returns WebGL 2 rendering context.
@@ -11,7 +39,7 @@
 export function createWebGLContext(
   canvas: HTMLCanvasElement | OffscreenCanvas,
 ): WebGL2RenderingContext {
-  const gl = canvas.getContext('webgl2')
+  const gl = canvas.getContext('webgl2') as WebGL2RenderingContext | null
   if (!gl) {
     throw new Error('WebGL 2 is not supported in this browser')
   }

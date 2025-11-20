@@ -1,7 +1,7 @@
 import type { SharedConfig, UttrNoiseGenerator } from '@/types'
 import { mergeSharedConfig } from '@/config'
 import { renderToImageData, setUniforms } from '@/webgl/render'
-import { createProgram, createWebGLContext } from '@/webgl/setup'
+import { setupWebGL } from '@/webgl/setup'
 import fragmentSource from './fragment.glsl'
 import vertexSource from './vertex.glsl'
 
@@ -63,16 +63,10 @@ const DEFAULT_VALUE_CONFIG = {
  * @returns Value noise generator instance.
  */
 export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
-  // Create offscreen canvas for WebGL rendering
-  const canvas = new OffscreenCanvas(1, 1)
-  const gl = createWebGLContext(canvas)
-
-  // Compile shader program only once
-  const program = createProgram(gl, vertexSource, fragmentSource)
+  const { canvas, gl, program } = setupWebGL(vertexSource, fragmentSource)
 
   return {
     async imageData(config: Partial<ValueNoiseConfig>): Promise<ImageData> {
-      // Resolve config with defaults
       const shared = mergeSharedConfig(config)
       const frequency = config.frequency ?? DEFAULT_VALUE_CONFIG.frequency
       const octaves = config.octaves ?? DEFAULT_VALUE_CONFIG.octaves
