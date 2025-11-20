@@ -9,7 +9,7 @@ uniform int u_octaves;
 uniform float u_persistence;
 uniform float u_lacunarity;
 
-out vec4 fragColor;
+out vec4 frag_color;
 
 // Hash function for pseudo-random values
 float hash(vec2 p) {
@@ -19,7 +19,7 @@ float hash(vec2 p) {
 }
 
 // Value noise function with optimized interpolation
-float valueNoise(vec2 p) {
+float value_noise(vec2 p) {
   vec2 i = floor(p);
   vec2 f = fract(p);
 
@@ -44,24 +44,23 @@ float fbm(vec2 p) {
   float value = 0.0;
   float amplitude = 1.0;
   float frequency = u_frequency;
-  float maxAmplitude = 0.0;
+  float max_amplitude = 0.0;
 
   for (int i = 0; i < 8; i++) {
     if (i >= u_octaves) break;
     
-    value += amplitude * valueNoise(p * frequency);
-    maxAmplitude += amplitude;
+    value += amplitude * value_noise(p * frequency);
+    max_amplitude += amplitude;
     amplitude *= u_persistence;
     frequency *= u_lacunarity;
   }
 
-  return maxAmplitude > 0.0 ? value / maxAmplitude : 0.0;
+  return max_amplitude > 0.0 ? value / max_amplitude : 0.0;
 }
 
 void main() {
   vec2 uv = gl_FragCoord.xy / vec2(u_width, u_height);
   float noise = fbm(uv);
   
-  fragColor = vec4(noise, noise, noise, 1.0);
+  frag_color = vec4(noise, noise, noise, 1.0);
 }
-
