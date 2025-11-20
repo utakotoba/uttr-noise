@@ -25,7 +25,7 @@ const DEFAULT_VALUE_CONFIG = {
  */
 export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
   // Create offscreen canvas for WebGL rendering
-  const canvas = document.createElement('canvas')
+  const canvas = new OffscreenCanvas(1, 1)
   const gl = createWebGLContext(canvas)
 
   // Compile shader program once

@@ -8,7 +8,9 @@
  * @returns WebGL rendering context.
  * @throws Error if WebGL is not supported.
  */
-export function createWebGLContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
+export function createWebGLContext(
+  canvas: HTMLCanvasElement | OffscreenCanvas,
+): WebGLRenderingContext {
   const gl = canvas.getContext('webgl')
   if (!gl) {
     throw new Error('WebGL is not supported in this browser')
