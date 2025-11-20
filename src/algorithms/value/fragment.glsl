@@ -8,6 +8,7 @@ uniform float u_frequency;
 uniform int u_octaves;
 uniform float u_persistence;
 uniform float u_lacunarity;
+uniform int u_interpolation;
 
 out vec4 frag_color;
 
@@ -18,7 +19,21 @@ float hash(vec2 p) {
   return fract((p3.x + p3.y) * p3.z + u_seed * 0.0001);
 }
 
-// Value noise function with optimized interpolation
+// Apply interpolation method to fractional value
+vec2 apply_interpolation(vec2 f) {
+  if (u_interpolation == 0) {
+    // Linear interpolation
+    return f;
+  } else if (u_interpolation == 1) {
+    // Smoothstep interpolation (cubic)
+    return f * f * (3.0 - 2.0 * f);
+  } else {
+    // Smootherstep interpolation (quintic)
+    return f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
+  }
+}
+
+// Value noise function with configurable interpolation
 float value_noise(vec2 p) {
   vec2 i = floor(p);
   vec2 f = fract(p);
@@ -28,8 +43,8 @@ float value_noise(vec2 p) {
   float c = hash(i + vec2(0.0, 1.0));
   float d = hash(i + vec2(1.0));
 
-  // Smoothstep interpolation
-  vec2 u = f * f * (3.0 - 2.0 * f);
+  // Apply selected interpolation method
+  vec2 u = apply_interpolation(f);
 
   // Bilinear interpolation
   return mix(
