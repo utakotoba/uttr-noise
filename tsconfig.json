@@ -5,8 +5,14 @@
       "esnext",
       "dom"
     ],
+    "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
     "resolveJsonModule": true,
     "strict": true,
     "noImplicitAny": true,
