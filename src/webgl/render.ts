@@ -122,6 +122,51 @@ export function renderToImageData(
 }
 
 /**
+ * Render to raw noise data as Float32Array.
+ * Returns normalized noise values (0-1 range) in row-major order.
+ * @param gl - WebGL 2 rendering context.
+ * @param program - WebGL program to use.
+ * @param width - Output width.
+ * @param height - Output height.
+ * @returns Float32Array of noise values with length width * height.
+ */
+export function renderToRawData(
+  gl: WebGL2RenderingContext,
+  program: WebGLProgram,
+  width: number,
+  height: number,
+): Float32Array {
+  gl.viewport(0, 0, width, height)
+  gl.useProgram(program)
+
+  const quad = createQuad(gl)
+  const positionLocation = gl.getAttribLocation(program, 'a_position')
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, quad)
+  gl.enableVertexAttribArray(positionLocation)
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0)
+
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+
+  // Read pixels as RGBA
+  const pixels = new Uint8Array(width * height * 4)
+  gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
+
+  const rawData = new Float32Array(width * height)
+  for (let y = 0; y < height; y++) {
+    const srcY = height - 1 - y
+    for (let x = 0; x < width; x++) {
+      const srcIdx = (srcY * width + x) * 4
+      const dstIdx = y * width + x
+      // Normalize from 0-255 to 0-1
+      rawData[dstIdx] = pixels[srcIdx] / 255.0
+    }
+  }
+
+  return rawData
+}
+
+/**
  * Convert a Blob to a base64 data URL.
  * @param blob - Blob to convert.
  * @returns Base64 data URL string.
