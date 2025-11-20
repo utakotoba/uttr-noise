@@ -1,4 +1,4 @@
-import type { SharedConfig } from './types/shared'
+import type { SharedConfig } from './types'
 
 /**
  * Default values for shared configuration.

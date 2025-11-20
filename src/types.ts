@@ -1,3 +1,5 @@
+import type { ValueNoiseConfig } from './algorithms/value'
+
 /**
  * Shared configuration used all kinds of noise generators.
  */
@@ -34,3 +36,22 @@ export interface UttrNoiseGenerator<T extends SharedConfig> {
    */
   imageData: (config: Partial<T>) => Promise<ImageData>
 }
+
+/**
+ * Internally used map of noise configuration.
+ * Config types are co-located with their algorithms.
+ * @private
+ */
+export interface NoiseConfigMap {
+  value: ValueNoiseConfig
+}
+
+/**
+ * Type of noise algorithm.
+ */
+export type NoiseAlgorithm = keyof NoiseConfigMap
+
+/**
+ * Re-export algorithm config types for convenience.
+ */
+export type { ValueNoiseConfig } from './algorithms/value'
