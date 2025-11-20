@@ -34,7 +34,7 @@ export interface UttrNoiseGenerator<T extends SharedConfig> {
    * @param config - Configuration to use for the noise generation.
    * @returns The generated noise image data.
    */
-  imageData: (config: Partial<T>) => Promise<ImageData>
+  imageData: (config?: Partial<T>) => Promise<ImageData>
 }
 
 /**

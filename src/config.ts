@@ -38,7 +38,7 @@ export function resolveSeed(
  * @returns Merged configuration with resolved values.
  */
 export function mergeSharedConfig(
-  config: Partial<SharedConfig>,
+  config?: Partial<SharedConfig>,
   sharedDefaults: typeof DEFAULT_SHARED_CONFIG = DEFAULT_SHARED_CONFIG,
 ): {
   width: number
@@ -46,8 +46,8 @@ export function mergeSharedConfig(
   seed: number
 } {
   return {
-    width: config.width ?? sharedDefaults.width,
-    height: config.height ?? sharedDefaults.height,
-    seed: resolveSeed(config.seed, sharedDefaults.seed),
+    width: config?.width ?? sharedDefaults.width,
+    height: config?.height ?? sharedDefaults.height,
+    seed: resolveSeed(config?.seed, sharedDefaults.seed),
   }
 }

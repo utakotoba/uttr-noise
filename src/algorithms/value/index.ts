@@ -66,12 +66,12 @@ export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
   const { canvas, gl, program } = setupWebGL(vertexSource, fragmentSource)
 
   return {
-    async imageData(config: Partial<ValueNoiseConfig>): Promise<ImageData> {
+    async imageData(config?: Partial<ValueNoiseConfig>): Promise<ImageData> {
       const shared = mergeSharedConfig(config)
-      const frequency = config.frequency ?? DEFAULT_VALUE_CONFIG.frequency
-      const octaves = config.octaves ?? DEFAULT_VALUE_CONFIG.octaves
-      const persistence = config.persistence ?? DEFAULT_VALUE_CONFIG.persistence
-      const lacunarity = config.lacunarity ?? DEFAULT_VALUE_CONFIG.lacunarity
+      const frequency = config?.frequency ?? DEFAULT_VALUE_CONFIG.frequency
+      const octaves = config?.octaves ?? DEFAULT_VALUE_CONFIG.octaves
+      const persistence = config?.persistence ?? DEFAULT_VALUE_CONFIG.persistence
+      const lacunarity = config?.lacunarity ?? DEFAULT_VALUE_CONFIG.lacunarity
 
       canvas.width = shared.width
       canvas.height = shared.height
