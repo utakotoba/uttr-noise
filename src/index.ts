@@ -1,12 +1,15 @@
 import type { NoiseAlgorithm, NoiseConfigMap } from '@/types/registry'
 import type { UttrNoiseGenerator } from '@/types/shared'
+import { value } from './algorithms/value'
 
 /**
  * Helper function to create a noise generator.
  */
 export function create<K extends NoiseAlgorithm>(
-  _algorithm: K,
+  algorithm: K,
 ): UttrNoiseGenerator<NoiseConfigMap[K]> {
-  // TODO: complete helper function to create generator
-  return {} as unknown as any
+  switch (algorithm) {
+    case 'value':
+      return value()
+  }
 }
