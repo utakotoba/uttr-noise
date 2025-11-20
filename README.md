@@ -5,3 +5,8 @@
 #### status
 
 > under development, not usable yet
+
+#### versioning
+
+- `v0.1.x`: breaking changes may occur in patch releases.
+- `v0.x.x` (except `v0.1.x`): breaking changes may occur in minor releases.
