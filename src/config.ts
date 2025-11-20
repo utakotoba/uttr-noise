@@ -10,6 +10,21 @@ export const DEFAULT_SHARED_CONFIG: Required<SharedConfig> = {
 }
 
 /**
+ * Hash a timestamp to distribute values more randomly.
+ * This ensures that even consecutive timestamps produce very different seed values.
+ * @param timestamp - Timestamp value to hash.
+ * @returns Hashed seed value.
+ */
+function hashTimestamp(timestamp: number): number {
+  const prime = 73_156_993_187
+  let hash = timestamp
+  hash = ((hash << 16) ^ hash) * prime
+  hash = ((hash << 16) ^ hash) * prime
+  hash = (hash << 16) ^ hash
+  return hash >>> 0
+}
+
+/**
  * Resolve seed value from configuration.
  * @param seed - Seed value from config (can be number, false, or undefined).
  * @param defaultSeed - Default seed value.
@@ -20,13 +35,13 @@ export function resolveSeed(
   defaultSeed: number | false = DEFAULT_SHARED_CONFIG.seed,
 ): number {
   if (seed === false) {
-    return Date.now()
+    return hashTimestamp(Date.now())
   }
   if (seed !== undefined) {
     return seed
   }
   if (defaultSeed === false) {
-    return Date.now()
+    return hashTimestamp(Date.now())
   }
   return defaultSeed
 }
