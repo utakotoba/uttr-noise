@@ -1,7 +1,7 @@
 {
   "name": "@uttr/noise",
   "type": "module",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "JavaScript library for noise images & overlays with WebGL",
   "author": "Kohane <i@kept.to>",
   "license": "MIT",
