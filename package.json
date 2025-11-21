@@ -1,5 +1,9 @@
 {
   "type": "module",
+  "workspaces": [
+    "lib",
+    "playbook"
+  ],
   "scripts": {
     "prepare": "simple-git-hooks",
     "typecheck": "bun run --filter '*' typecheck",

@@ -28,7 +28,6 @@
     "dist"
   ],
   "scripts": {
-    "prepare": "simple-git-hooks",
     "typecheck": "tsc --noEmit",
     "dev": "tsdown --config-loader unrun --watch",
     "build": "tsdown --config-loader unrun"
