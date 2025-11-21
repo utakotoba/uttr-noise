@@ -22,8 +22,8 @@ vec2 hash2(vec2 p) {
   return normalize(h * 2.0 - 1.0);
 }
 
-// Smooth interpolation function (5th order polynomial)
-float smooth(float t) {
+// Smooth interpolation function
+float smootherstep(float t) {
   return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
 }
 
@@ -51,7 +51,7 @@ float perlin_noise(vec2 p) {
   float n11 = dot(g11, d11);
   
   // Smooth interpolation
-  vec2 u = vec2(smooth(f.x), smooth(f.y));
+  vec2 u = vec2(smootherstep(f.x), smootherstep(f.y));
   
   // Bilinear interpolation
   // Normalize from [-1, 1] to [0, 1]
