@@ -8,6 +8,7 @@ uniform float u_frequency;
 uniform int u_octaves;
 uniform float u_persistence;
 uniform float u_lacunarity;
+uniform float u_amplitude;
 uniform int u_interpolation;
 
 out vec4 frag_color;
@@ -75,7 +76,7 @@ float fbm(vec2 p) {
 
 void main() {
   vec2 uv = gl_FragCoord.xy / vec2(u_width, u_height);
-  float noise = fbm(uv);
+  float noise = fbm(uv) * u_amplitude;
   
   frag_color = vec4(noise, noise, noise, 1.0);
 }

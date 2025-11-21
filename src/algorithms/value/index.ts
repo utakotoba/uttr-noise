@@ -18,42 +18,6 @@ export type ValueInterpolationMethod = 'linear' | 'smoothstep' | 'smootherstep'
  */
 export interface ValueNoiseConfig extends SharedConfig {
   /**
-   * Frequency of the noise.
-   *
-   * How rapidly the noise value changes across the input domain.
-   * Higher frequency (smaller scale) means smaller, more dense features.
-   * @default 1
-   */
-  frequency?: number
-
-  /**
-   * Octaves of the noise.
-   *
-   * How many levels of detail to include in the noise.
-   * Higher octaves (larger multiplier) means more detailed noise.
-   * @default 1
-   */
-  octaves?: number
-
-  /**
-   * Persistence of the noise.
-   *
-   * How much each octave contributes to the final noise value.
-   * Higher persistence (larger multiplier) means more contribution from higher octaves.
-   * @default 0.5
-   */
-  persistence?: number
-
-  /**
-   * Lacunarity of the noise.
-   *
-   * How quickly the frequency increases as we move to higher octaves.
-   * Higher lacunarity (larger multiplier) means more frequent changes in frequency.
-   * @default 2
-   */
-  lacunarity?: number
-
-  /**
    * Interpolation method used for blending between noise values.
    *
    * - `linear`: Simple linear interpolation (fastest, but can appear blocky)
@@ -68,10 +32,6 @@ export interface ValueNoiseConfig extends SharedConfig {
  * Default configuration values specific to value noise.
  */
 const DEFAULT_VALUE_CONFIG = {
-  frequency: 1,
-  octaves: 1,
-  persistence: 0.5,
-  lacunarity: 2,
   interpolation: 'smoothstep' as const,
 } as const
 
@@ -84,10 +44,6 @@ export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
 
   const prepareRender = (config?: Partial<ValueNoiseConfig>) => {
     const shared = mergeSharedConfig(config)
-    const frequency = config?.frequency ?? DEFAULT_VALUE_CONFIG.frequency
-    const octaves = config?.octaves ?? DEFAULT_VALUE_CONFIG.octaves
-    const persistence = config?.persistence ?? DEFAULT_VALUE_CONFIG.persistence
-    const lacunarity = config?.lacunarity ?? DEFAULT_VALUE_CONFIG.lacunarity
     const interpolation = config?.interpolation ?? DEFAULT_VALUE_CONFIG.interpolation
     const interpolationValue = interpolation === 'linear' ? 0 : interpolation === 'smoothstep' ? 1 : 2
 
@@ -100,10 +56,11 @@ export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
       u_width: { type: '1f', value: shared.width },
       u_height: { type: '1f', value: shared.height },
       u_seed: { type: '1f', value: shared.seed },
-      u_frequency: { type: '1f', value: frequency },
-      u_octaves: { type: '1i', value: octaves },
-      u_persistence: { type: '1f', value: persistence },
-      u_lacunarity: { type: '1f', value: lacunarity },
+      u_frequency: { type: '1f', value: shared.frequency },
+      u_octaves: { type: '1i', value: shared.octaves },
+      u_persistence: { type: '1f', value: shared.persistence },
+      u_lacunarity: { type: '1f', value: shared.lacunarity },
+      u_amplitude: { type: '1f', value: shared.amplitude },
       u_interpolation: { type: '1i', value: interpolationValue },
     })
 

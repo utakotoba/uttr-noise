@@ -23,6 +23,51 @@ export interface SharedConfig {
    * @default 37
    */
   seed?: number | false
+
+  /**
+   * Frequency of the noise (also known as scale).
+   *
+   * How rapidly the noise value changes across the input domain.
+   * Higher frequency (smaller scale) means smaller, more dense features.
+   * @default 1
+   */
+  frequency?: number
+
+  /**
+   * Octaves of the noise.
+   *
+   * How many levels of detail to include in the noise.
+   * Higher octaves means more detailed noise.
+   * @default 1
+   */
+  octaves?: number
+
+  /**
+   * Persistence of the noise (also known as gain).
+   *
+   * How much each octave contributes to the final noise value.
+   * Higher persistence means more contribution from higher octaves.
+   * @default 0.5
+   */
+  persistence?: number
+
+  /**
+   * Lacunarity of the noise.
+   *
+   * How quickly the frequency increases as we move to higher octaves.
+   * Higher lacunarity means more frequent changes in frequency.
+   * @default 2
+   */
+  lacunarity?: number
+
+  /**
+   * Amplitude of the noise (also known as strength).
+   *
+   * Controls the overall strength/intensity of the noise output.
+   * Values are multiplied by this factor before output.
+   * @default 1
+   */
+  amplitude?: number
 }
 
 /**

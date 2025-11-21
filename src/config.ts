@@ -7,6 +7,11 @@ export const DEFAULT_SHARED_CONFIG: Required<SharedConfig> = {
   width: 512,
   height: 512,
   seed: 37,
+  frequency: 1,
+  octaves: 1,
+  persistence: 0.5,
+  lacunarity: 2,
+  amplitude: 1,
 }
 
 /**
@@ -59,10 +64,20 @@ export function mergeSharedConfig(
   width: number
   height: number
   seed: number
+  frequency: number
+  octaves: number
+  persistence: number
+  lacunarity: number
+  amplitude: number
 } {
   return {
     width: config?.width ?? sharedDefaults.width,
     height: config?.height ?? sharedDefaults.height,
     seed: resolveSeed(config?.seed, sharedDefaults.seed),
+    frequency: config?.frequency ?? sharedDefaults.frequency,
+    octaves: config?.octaves ?? sharedDefaults.octaves,
+    persistence: config?.persistence ?? sharedDefaults.persistence,
+    lacunarity: config?.lacunarity ?? sharedDefaults.lacunarity,
+    amplitude: config?.amplitude ?? sharedDefaults.amplitude,
   }
 }
