@@ -37,7 +37,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build
-        run: bun run build
+        run: bun run --filter @uttr/noise build
 
       - name: Publish to npm registry
         run: |

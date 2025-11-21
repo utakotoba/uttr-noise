@@ -5,10 +5,7 @@
     "playbook"
   ],
   "scripts": {
-    "prepare": "simple-git-hooks",
-    "typecheck": "bun run --filter '*' typecheck",
-    "dev": "bun run --filter '*' dev",
-    "build": "bun run --filter '*' build"
+    "postinstall": "simple-git-hooks"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^6.2.0",
