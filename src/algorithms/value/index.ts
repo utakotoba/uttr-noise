@@ -36,7 +36,7 @@ const DEFAULT_VALUE_CONFIG = {
 } as const
 
 /**
- * Create a value noise generator.
+ * Create a Value noise generator.
  * @returns Value noise generator instance.
  */
 export function value(): UttrNoiseGenerator<ValueNoiseConfig> {

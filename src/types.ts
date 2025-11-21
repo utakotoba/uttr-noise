@@ -1,3 +1,5 @@
+import type { PerlinNoiseConfig } from './algorithms/perlin'
+import type { SimplexNoiseConfig } from './algorithms/simplex'
 import type { ValueNoiseConfig } from './algorithms/value'
 
 /**
@@ -105,6 +107,8 @@ export interface UttrNoiseGenerator<T extends SharedConfig> {
  */
 export interface NoiseConfigMap {
   value: ValueNoiseConfig
+  simplex: SimplexNoiseConfig
+  perlin: PerlinNoiseConfig
 }
 
 /**
@@ -112,6 +116,8 @@ export interface NoiseConfigMap {
  */
 export type NoiseAlgorithm = keyof NoiseConfigMap
 
+export type { PerlinNoiseConfig } from './algorithms/perlin'
+export type { SimplexNoiseConfig } from './algorithms/simplex'
 /**
  * Re-export algorithm config types for convenience.
  */
