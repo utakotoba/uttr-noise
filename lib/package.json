@@ -31,7 +31,6 @@
     "prepare": "simple-git-hooks",
     "typecheck": "tsc --noEmit",
     "dev": "tsdown --config-loader unrun --watch",
-    "build": "tsdown --config-loader unrun",
-    "prepublishOnly": "bun run build"
+    "build": "tsdown --config-loader unrun"
   }
 }
