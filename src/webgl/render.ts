@@ -1,3 +1,5 @@
+import type { SharedConfig, UttrNoiseGenerator } from '@/types'
+
 /**
  * WebGL rendering utilities for setting uniforms and rendering to ImageData.
  */
@@ -219,4 +221,34 @@ export async function renderToDataUrl(
 
   const blob = await canvas.convertToBlob({ type: 'image/png' })
   return blobToDataUrl(blob)
+}
+
+/**
+ * Create a noise generator with standard methods.
+ * @param canvas - OffscreenCanvas used for rendering.
+ * @param gl - WebGL 2 rendering context.
+ * @param program - WebGL program to use.
+ * @param prepareRender - Function that prepares the render state and returns shared config.
+ * @returns Noise generator instance with imageData, dataUrl, and rawData methods.
+ */
+export function createNoiseGenerator<T extends SharedConfig>(
+  canvas: OffscreenCanvas,
+  gl: WebGL2RenderingContext,
+  program: WebGLProgram,
+  prepareRender: (config?: Partial<T>) => { width: number, height: number },
+): UttrNoiseGenerator<T> {
+  return {
+    imageData(config?: Partial<T>): ImageData {
+      const shared = prepareRender(config)
+      return renderToImageData(gl, program, shared.width, shared.height)
+    },
+    async dataUrl(config?: Partial<T>): Promise<string> {
+      const shared = prepareRender(config)
+      return renderToDataUrl(canvas, gl, program, shared.width, shared.height)
+    },
+    rawData(config?: Partial<T>): Float32Array {
+      const shared = prepareRender(config)
+      return renderToRawData(gl, program, shared.width, shared.height)
+    },
+  }
 }

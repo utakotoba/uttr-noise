@@ -1,6 +1,6 @@
 import type { SharedConfig, UttrNoiseGenerator } from '@/types'
 import { mergeSharedConfig } from '@/config'
-import { renderToDataUrl, renderToImageData, renderToRawData, setUniforms } from '@/webgl/render'
+import { createNoiseGenerator, setUniforms } from '@/webgl/render'
 import { setupWebGL } from '@/webgl/setup'
 import fragmentSource from './fragment.glsl'
 import vertexSource from './vertex.glsl'
@@ -67,18 +67,5 @@ export function value(): UttrNoiseGenerator<ValueNoiseConfig> {
     return shared
   }
 
-  return {
-    imageData(config?: Partial<ValueNoiseConfig>): ImageData {
-      const shared = prepareRender(config)
-      return renderToImageData(gl, program, shared.width, shared.height)
-    },
-    async dataUrl(config?: Partial<ValueNoiseConfig>): Promise<string> {
-      const shared = prepareRender(config)
-      return renderToDataUrl(canvas, gl, program, shared.width, shared.height)
-    },
-    rawData(config?: Partial<ValueNoiseConfig>): Float32Array {
-      const shared = prepareRender(config)
-      return renderToRawData(gl, program, shared.width, shared.height)
-    },
-  }
+  return createNoiseGenerator(canvas, gl, program, prepareRender)
 }
