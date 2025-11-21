@@ -1,5 +1,5 @@
 import { defineConfig } from 'tsdown'
-import { glslLoader } from './tools/rolldown-plugin-glsl'
+import { glslLoader } from '../tools/rolldown-plugin-glsl'
 
 export default defineConfig({
   entry: 'src/index.ts',

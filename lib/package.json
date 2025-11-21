@@ -1,0 +1,37 @@
+{
+  "name": "@uttr/noise",
+  "type": "module",
+  "version": "0.1.4",
+  "description": "JavaScript library for noise images & overlays with WebGL",
+  "author": "Kohane <i@kept.to>",
+  "license": "MIT",
+  "homepage": "https://github.com/utakotoba/uttr-noise#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/utakotoba/uttr-noise.git"
+  },
+  "bugs": {
+    "url": "https://github.com/utakotoba/uttr-noise/issues"
+  },
+  "keywords": [
+    "noise",
+    "webgl"
+  ],
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepare": "simple-git-hooks",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsdown --config-loader unrun --watch",
+    "build": "tsdown --config-loader unrun",
+    "prepublishOnly": "bun run build"
+  }
+}

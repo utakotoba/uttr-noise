@@ -41,6 +41,7 @@ jobs:
 
       - name: Publish to npm registry
         run: |
+          cd lib
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
           bunx npm publish --provenance --access public
         env:

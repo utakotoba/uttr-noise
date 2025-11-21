@@ -5,14 +5,8 @@
       "esnext",
       "dom"
     ],
-    "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
     "resolveJsonModule": true,
     "strict": true,
     "noImplicitAny": true,
@@ -27,11 +21,9 @@
     "skipLibCheck": true
   },
   "include": [
-    "eslint.config.ts",
-    "src/**/*.ts"
+    "eslint.config.ts"
   ],
   "exclude": [
-    "node_modules",
-    "dist"
+    "node_modules"
   ]
 }
