@@ -1,4 +1,6 @@
 import type { SharedConfig, UttrNoiseGenerator } from '@/types'
+import type { WebGLResources } from '@/webgl/setup'
+import { mergeSharedConfig } from '@/config'
 
 /**
  * WebGL rendering utilities for setting uniforms and rendering to ImageData.
@@ -7,7 +9,7 @@ import type { SharedConfig, UttrNoiseGenerator } from '@/types'
 /**
  * Uniform value specification.
  */
-type UniformValue
+export type UniformValue
   = | { type: '1f', value: number }
     | { type: '1i', value: number }
     | { type: '2f', value: [number, number] }
@@ -224,19 +226,60 @@ export async function renderToDataUrl(
 }
 
 /**
+ * Create a prepareRender function wrapper that handles common setup.
+ * @param resources - WebGL resources (canvas, gl, program).
+ * @param additionalUniforms - Optional function that returns noise-specific uniforms.
+ * @returns A prepareRender function that can be used with createNoiseGenerator.
+ */
+export function createPrepareRender<T extends SharedConfig>(
+  resources: WebGLResources,
+  additionalUniforms?: (config: Partial<T>, shared: ReturnType<typeof mergeSharedConfig>) => Record<string, UniformValue>,
+): (config?: Partial<T>) => { width: number, height: number } {
+  const { canvas, gl, program } = resources
+  return (config?: Partial<T>) => {
+    const shared = mergeSharedConfig(config)
+
+    canvas.width = shared.width
+    canvas.height = shared.height
+
+    gl.useProgram(program)
+
+    const uniforms: Record<string, UniformValue> = {
+      u_width: { type: '1f', value: shared.width },
+      u_height: { type: '1f', value: shared.height },
+      u_seed: { type: '1f', value: shared.seed },
+      u_frequency: { type: '1f', value: shared.frequency },
+      u_octaves: { type: '1i', value: shared.octaves },
+      u_persistence: { type: '1f', value: shared.persistence },
+      u_lacunarity: { type: '1f', value: shared.lacunarity },
+      u_amplitude: { type: '1f', value: shared.amplitude },
+    }
+
+    if (additionalUniforms) {
+      Object.assign(uniforms, additionalUniforms(config ?? {}, shared))
+    }
+
+    setUniforms(gl, program, uniforms)
+
+    return shared
+  }
+}
+
+/**
  * Create a noise generator with standard methods.
- * @param canvas - OffscreenCanvas used for rendering.
- * @param gl - WebGL 2 rendering context.
- * @param program - WebGL program to use.
- * @param prepareRender - Function that prepares the render state and returns shared config.
+ * This function encapsulates the WebGL resources and prepareRender setup,
+ * providing a cleaner API that doesn't require passing resources multiple times.
+ * @param resources - WebGL resources (canvas, gl, program).
+ * @param additionalUniforms - Optional function that returns noise-specific uniforms.
  * @returns Noise generator instance with imageData, dataUrl, and rawData methods.
  */
 export function createNoiseGenerator<T extends SharedConfig>(
-  canvas: OffscreenCanvas,
-  gl: WebGL2RenderingContext,
-  program: WebGLProgram,
-  prepareRender: (config?: Partial<T>) => { width: number, height: number },
+  resources: WebGLResources,
+  additionalUniforms?: (config: Partial<T>, shared: ReturnType<typeof mergeSharedConfig>) => Record<string, UniformValue>,
 ): UttrNoiseGenerator<T> {
+  const { canvas, gl, program } = resources
+  const prepareRender = createPrepareRender(resources, additionalUniforms)
+
   return {
     imageData(config?: Partial<T>): ImageData {
       const shared = prepareRender(config)
